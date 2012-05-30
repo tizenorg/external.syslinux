@@ -11,6 +11,7 @@ ExclusiveArch: %{ix86} x86_64
 Buildroot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: nasm >= 0.98.39, perl
 Source101: syslinux-rpmlintrc
+Source1001: packaging/syslinux.manifest 
 # >> gbp-patch-tags         # auto-added by gbp
 Patch0:    0001-btrfs-Correctly-determine-the-installation-subvolume.patch
 # << gbp-patch-tags         # auto-added by gbp
@@ -70,6 +71,7 @@ booting in the /var/lib/tftpboot directory.
 # << gbp-apply-patches    # auto-added by gbp
 
 %build
+cp %{SOURCE1001} .
 make CC='%{my_cc}' clean
 make CC='%{my_cc}' installer
 make CC='%{my_cc}' -C sample tidy
@@ -87,6 +89,7 @@ make CC='%{my_cc}' -C sample tidy
 rm -rf %{buildroot}
 
 %files
+%manifest syslinux.manifest
 %defattr(-,root,root)
 %{_bindir}
 %dir %{_datadir}/syslinux
@@ -99,6 +102,7 @@ rm -rf %{buildroot}
 %{_datadir}/syslinux/dosutil
 
 %files devel
+%manifest syslinux.manifest
 %defattr(-,root,root)
 %doc COPYING NEWS README doc/*
 %doc sample
@@ -107,11 +111,13 @@ rm -rf %{buildroot}
 %{_datadir}/syslinux/diag
 
 %files extlinux
+%manifest syslinux.manifest
 %defattr(-,root,root)
 %{_sbindir}/extlinux
 /boot/extlinux
 
 %files tftpboot
+%manifest syslinux.manifest
 %defattr(-,root,root)
 /var/lib/tftpboot
 
