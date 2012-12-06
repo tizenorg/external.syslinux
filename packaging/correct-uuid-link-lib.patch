@@ -1,0 +1,13 @@
+diff --git a/utils/Makefile b/utils/Makefile
+index 44cb54f..be73993 100644
+--- a/utils/Makefile
++++ b/utils/Makefile
+@@ -51,7 +51,7 @@ isohdpfx.c: $(ISOHDPFX) isohdpfxarray.pl
+ 	$(PERL) isohdpfxarray.pl $(ISOHDPFX) > $@
+ 
+ isohybrid: isohybrid.o isohdpfx.o
+-	$(CC) $(LDFLAGS) -luuid -o $@ $^
++	$(CC) $(LDFLAGS) -o $@ $^ -luuid
+ 
+ gethostip: gethostip.o
+ 	$(CC) $(LDFLAGS) -o $@ $^
