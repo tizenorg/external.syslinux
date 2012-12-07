@@ -9,8 +9,8 @@ Vendor: openSUSE
 License: GPLv2
 Url: http://syslinux.zytor.com/
 Group: System/Boot
-#Source0: ftp://ftp.kernel.org/pub/linux/utils/boot/syslinux/%{name}-%{version}.tar.gz
 Source0: %{name}-%{version}.tar.gz
+Source1001: packaging/syslinux.manifest 
 Patch0: correct-uuid-link-lib.patch 
 ExclusiveArch: %{ix86} x86_64
 Buildroot: %{_tmppath}/%{name}-%{version}-root
@@ -73,6 +73,7 @@ booting in the /var/lib/tftpboot directory.
 %patch0 -p1
 
 %build
+cp %{SOURCE1001} .
 make CC='%{my_cc}' clean
 make CC='%{my_cc}' installer
 make CC='%{my_cc}' -C sample tidy
@@ -90,6 +91,7 @@ make CC='%{my_cc}' -C sample tidy
 rm -rf %{buildroot}
 
 %files
+%manifest syslinux.manifest
 %defattr(-,root,root)
 %doc COPYING NEWS doc/*
 %doc sample
@@ -110,15 +112,18 @@ rm -rf %{buildroot}
 /boot/extlinux
 
 %files devel
+%manifest syslinux.manifest
 %defattr(-,root,root)
 %{_datadir}/syslinux/com32
 
 %files extlinux
+%manifest syslinux.manifest
 %defattr(-,root,root)
 %{_sbindir}/extlinux
 /boot/extlinux
 
 %files tftpboot
+%manifest syslinux.manifest
 %defattr(-,root,root)
 /var/lib/tftpboot
 
