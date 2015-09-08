@@ -1,4 +1,4 @@
-SUBDIRS = libupload tools lib gpllib libutil modules mboot menu samples rosh cmenu \
+SUBDIRS = tools lib gpllib libutil modules mboot menu samples rosh cmenu \
 	  hdt gfxboot sysdump lua/src
 
 all tidy dist clean spotless install:

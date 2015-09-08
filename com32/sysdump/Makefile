@@ -16,14 +16,11 @@
 ##
 
 topdir = ../..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/com32.mk
+include ../MCONFIG
 -include $(topdir)/version.mk
 
-LIBS	   = ../libupload/libcom32upload.a
+LIBS	   = ../libutil/libutil_com.a ../lib/libcom32.a $(LIBGCC)
 LNXLIBS	   = ../libutil/libutil_lnx.a
-
-CFLAGS += -I$(com32) -I$(topdir)
 
 MODULES	  = sysdump.c32
 TESTFILES =

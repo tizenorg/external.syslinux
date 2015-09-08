@@ -20,8 +20,7 @@ MAKEFLAGS += -r
 MAKE      += -r
 
 topdir = ..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/embedded.mk
+include $(topdir)/MCONFIG.embedded
 -include $(topdir)/version.mk
 
 OPTFLAGS =
@@ -110,7 +109,7 @@ ldlinux.bss: ldlinux.bin
 	dd if=$< of=$@ bs=512 count=1
 
 ldlinux.sys: ldlinux.bin
-	dd if=$< of=$@ bs=512 skip=2
+	dd if=$< of=$@ bs=512 skip=1
 
 codepage.cp: ../codepage/$(CODEPAGE).cp
 	cp -f $< $@

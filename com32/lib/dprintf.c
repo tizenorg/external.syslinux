@@ -9,7 +9,6 @@
 #define DEBUG 1
 #include <dprintf.h>
 
-#ifndef dprintf
 void dprintf(const char *format, ...)
 {
     va_list ap;
@@ -18,4 +17,3 @@ void dprintf(const char *format, ...)
     vdprintf(format, ap);
     va_end(ap);
 }
-#endif

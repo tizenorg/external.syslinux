@@ -1,29 +1,26 @@
 # -*- rpm -*-
 Summary: Kernel loader which uses a FAT, ext2/3 or iso9660 filesystem or a PXE network
 Name: syslinux
-Version: 4.05
+Version: 4.04
 Release: 1.2
-%if 0%{?suse_version}
-Vendor: openSUSE
-%endif
+VCS:     external/syslinux#submit/tizen_2.2/20130714.154204-0-g56211b861f0432f346a449a28b6c7e88809eef31
 License: GPLv2
 Url: http://syslinux.zytor.com/
 Group: System/Boot
-Source0: %{name}-%{version}.tar.gz
-Source1001: packaging/syslinux.manifest 
-Patch0: correct-uuid-link-lib.patch 
+Source0: ftp://ftp.kernel.org/pub/linux/utils/boot/syslinux/%{name}-%{version}.tar.gz
 ExclusiveArch: %{ix86} x86_64
 Buildroot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: nasm >= 0.98.39, perl, libuuid-devel
-%if 0%{?suse_version}
-BuildRequires: libuuid1
-%else
-BuildRequires: libuuid
-%endif
+BuildRequires: nasm >= 0.98.39, perl
 Source101: syslinux-rpmlintrc
+Source1001: packaging/syslinux.manifest 
+# >> gbp-patch-tags         # auto-added by gbp
+Patch0:    0001-btrfs-Correctly-determine-the-installation-subvolume.patch
+Patch1:    0002-syslinux-4.05-avoid-ext2_fs.h.patch
+# << gbp-patch-tags         # auto-added by gbp
+
 Autoreq: 0
 %ifarch x86_64
-Requires: mtools, libc.so.6()(64bit)
+Requires: mtools
 %define my_cc gcc
 %else
 Requires: mtools, libc.so.6
@@ -34,16 +31,16 @@ Requires: mtools, libc.so.6
 # a system bootloader, and may be necessary for system recovery.
 %define _sbindir /sbin
 
-%package devel
-Summary: Development environment for SYSLINUX add-on modules
-Group: Development/Libraries
-Requires: syslinux
-
 %description
 SYSLINUX is a suite of bootloaders, currently supporting DOS FAT
 filesystems, Linux ext2/ext3 filesystems (EXTLINUX), PXE network boots
 (PXELINUX), or ISO 9660 CD-ROMs (ISOLINUX).  It also includes a tool,
 MEMDISK, which loads legacy operating systems from these media.
+
+%package devel
+Summary: Development environment for SYSLINUX add-on modules
+Group: Development/Libraries
+Requires: syslinux
 
 %description devel
 The SYSLINUX boot loader contains an API, called COM32, for writing
@@ -70,7 +67,11 @@ booting in the /var/lib/tftpboot directory.
 
 %prep
 %setup -q -n syslinux-%{version}
+
+# >> gbp-apply-patches    # auto-added by gbp
 %patch0 -p1
+%patch1 -p1
+# << gbp-apply-patches    # auto-added by gbp
 
 %build
 cp %{SOURCE1001} .
@@ -93,9 +94,6 @@ rm -rf %{buildroot}
 %files
 %manifest syslinux.manifest
 %defattr(-,root,root)
-%doc COPYING NEWS doc/*
-%doc sample
-%doc %{_mandir}/man*/*
 %{_bindir}/*
 %dir %{_datadir}/syslinux
 %{_datadir}/syslinux/*.com
@@ -104,17 +102,16 @@ rm -rf %{buildroot}
 %{_datadir}/syslinux/*.bin
 %{_datadir}/syslinux/*.0
 %{_datadir}/syslinux/memdisk
-%dir %{_datadir}/syslinux/dosutil
-%{_datadir}/syslinux/dosutil/*
-%dir %{_datadir}/syslinux/diag
-%{_datadir}/syslinux/diag/*
-%{_sbindir}/extlinux
-/boot/extlinux
+%{_datadir}/syslinux/dosutil
 
 %files devel
 %manifest syslinux.manifest
 %defattr(-,root,root)
+%doc COPYING NEWS README doc/*
+%doc sample
+%doc %{_mandir}/man*/*
 %{_datadir}/syslinux/com32
+%{_datadir}/syslinux/diag
 
 %files extlinux
 %manifest syslinux.manifest
@@ -126,7 +123,6 @@ rm -rf %{buildroot}
 %manifest syslinux.manifest
 %defattr(-,root,root)
 /var/lib/tftpboot
-
 
 %post extlinux
 # If we have a /boot/extlinux.conf file, assume extlinux is our bootloader

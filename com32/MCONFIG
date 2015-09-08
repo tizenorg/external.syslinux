@@ -15,7 +15,7 @@
 ## COM32 common configurables
 ##
 
-include $(MAKEDIR)/syslinux.mk
+include $(topdir)/MCONFIG
 
 GCCOPT := $(call gcc_ok,-std=gnu99,)
 GCCOPT += $(call gcc_ok,-m32,)

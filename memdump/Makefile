@@ -15,8 +15,7 @@
 ##
 
 topdir = ..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/embedded.mk
+include $(topdir)/MCONFIG.embedded
 
 OPTFLAGS = 
 INCLUDES = -include code16.h -I.

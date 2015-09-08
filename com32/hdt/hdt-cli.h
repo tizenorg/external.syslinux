@@ -65,7 +65,6 @@
 #define CLI_ACPI "acpi"
 #define CLI_ENABLE "enable"
 #define CLI_DISABLE "disable"
-#define CLI_DUMP "dump"
 
 typedef enum {
     INVALID_MODE,

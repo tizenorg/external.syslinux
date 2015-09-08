@@ -4,9 +4,8 @@
 
 # Include configuration rules
 NOGPL := 1
-topdir = ../../
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/lib.mk
+topdir = ../..
+include MCONFIG
 
 LIBOBJS = \
 	abort.o atexit.o atoi.o atol.o atoll.o calloc.o creat.o		\
@@ -29,9 +28,6 @@ LIBOBJS = \
 	asprintf.o vasprintf.o strlcpy.o strlcat.o			\
 	vsscanf.o zalloc.o						\
 	skipspace.o							\
-	chrreplace.o							\
-	bufprintf.o							\
-	inet.o								\
 	\
 	lmalloc.o lstrdup.o						\
 	\

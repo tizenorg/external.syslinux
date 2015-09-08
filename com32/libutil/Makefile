@@ -30,8 +30,7 @@
 ##
 
 topdir = ../..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/com32.mk
+include ../MCONFIG
 
 LIBOBJS	   = ansiline.o ansiraw.o get_key.o keyname.o \
 	     sha1hash.o unbase64.o \

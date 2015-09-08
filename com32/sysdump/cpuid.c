@@ -8,6 +8,7 @@
 #include <com32.h>
 #include <sys/cpu.h>
 #include "sysdump.h"
+#include "backend.h"
 
 struct cpuid_data {
     uint32_t eax, ebx, ecx, edx;
@@ -28,7 +29,7 @@ static void get_cpuid(uint32_t eax, uint32_t ecx, struct cpuid_data *data)
 
 #define CPUID_CHUNK 128
 
-void dump_cpuid(struct upload_backend *be)
+void dump_cpuid(struct backend *be)
 {
     struct cpuid_info *buf = NULL;
     int nentry, nalloc;

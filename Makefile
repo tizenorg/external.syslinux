@@ -15,8 +15,7 @@
 # Main Makefile for SYSLINUX
 #
 topdir = .
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/syslinux.mk
+include $(topdir)/MCONFIG
 -include $(topdir)/version.mk
 
 #
@@ -97,13 +96,6 @@ installer:
 	-ls -l $(BOBJECTS) $(IOBJECTS)
 
 installer-local: $(ITARGET) $(BINFILES)
-
-strip:
-	$(MAKE) strip-local
-	set -e ; for i in $(ISUBDIRS); do $(MAKE) -C $$i strip ; done
-	-ls -l $(BOBJECTS) $(IOBJECTS)
-
-strip-local:
 
 version.gen: version version.pl
 	$(PERL) version.pl $< $@ '%define < @'

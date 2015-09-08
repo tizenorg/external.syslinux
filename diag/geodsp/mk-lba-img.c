@@ -24,18 +24,16 @@
 
 #define NUM_SECT (256*63+1)
 #define BPS (512)
-#define SECT_INT (BPS / sizeof(unsigned int))
+#define SECT_INT (512 / sizeof(int))
 
 typedef unsigned char uint8_t;
 typedef unsigned int uint32_t;
 
-const char DEF_FN[] = "-";
+const char DEF_FN[] = "lba.img";
 
 int main(int argc, char *argv[])
 {
-	int i, rv = 0, one = 0;
-	unsigned int lba, b[SECT_INT];
-	int len;
+	int i, j, b[SECT_INT], rv = 0, one = 0;
 	FILE *f;
 	uint8_t tt = 0;
 	const char *fn;
@@ -55,40 +53,23 @@ int main(int argc, char *argv[])
 		fn = DEF_FN;
 	}
 
-	if (!strcmp(fn, "-"))
-		f = stdout;
-	else
-		f = fopen(fn, "w");
+	f = fopen(fn, "w");
 
-	if (!f) {
-		fprintf(stderr, "%s: %s: unable to open for writing: %s\n",
-			argv[0], fn, strerror(errno));
-		return 1;
-	}
-
-	lba = 0;
-	while ((len = fread(b, 1, BPS, stdin))) {
-		if (len < BPS)
-			memset((char *)b + len, 0, BPS - len);
-		fwrite(b, 1, BPS, f);
-		lba++;
-	}
-
-	memset(b, 0, sizeof b);
-
-	while (lba < NUM_SECT) {
-		if (one) {
-			b[0] = lba;
-		} else {
-			for (i = 0; i < SECT_INT; i++)
-				b[i] = lba;
+	if (f) {
+		for (i = 0; i < NUM_SECT; i++) {
+			if (one) {
+				b[0] = i;
+			} else {
+				for (j = 0; j < (512 / sizeof(int)); j++) {
+					b[j] = i;
+				}
+			}
+			fwrite(b, 512, 1, f);
 		}
-		fwrite(b, 1, BPS, f);
-		lba++;
-	}
-
-	if (f != stdout)
 		fclose(f);
-
+	} else {
+		puts("Unable to open for writing");
+		rv = 1;
+	}
 	return rv;
 }

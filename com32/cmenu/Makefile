@@ -17,12 +17,11 @@
 
 NOGPL := 1
 
-# This must be defined before com32.mk is included
+# This must be defined before MCONFIG is included
 LIBS   = libmenu/libmenu.a
 
 topdir = ../..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/com32.mk
+include ../MCONFIG
 
 CFLAGS	  += -I./libmenu
 

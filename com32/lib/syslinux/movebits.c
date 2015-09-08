@@ -48,7 +48,21 @@
 #include <stdbool.h>
 
 #include <syslinux/movebits.h>
-#include <dprintf.h>
+
+#ifndef DEBUG
+# ifdef TEST
+#  define DEBUG 1
+# else
+#  define DEBUG 0
+# endif
+#endif
+
+#if DEBUG
+# include <stdio.h>
+# define dprintf printf
+#else
+# define dprintf(...) ((void)0)
+#endif
 
 static jmp_buf new_movelist_bail;
 
@@ -228,8 +242,10 @@ static void shuffle_dealias(struct syslinux_movelist **fraglist,
     addr_t ps, pe, xs, xe, delta;
     bool advance;
 
+#if DEBUG
     dprintf("Before alias resolution:\n");
-    syslinux_dump_movelist(*fraglist);
+    syslinux_dump_movelist(stdout, *fraglist);
+#endif
 
     *postcopy = NULL;
 
@@ -300,10 +316,12 @@ restart:
 	;
     }
 
+#if DEBUG
     dprintf("After alias resolution:\n");
-    syslinux_dump_movelist(*fraglist);
+    syslinux_dump_movelist(stdout, *fraglist);
     dprintf("Post-shuffle copies:\n");
-    syslinux_dump_movelist(*postcopy);
+    syslinux_dump_movelist(stdout, *postcopy);
+#endif
 }
 
 /*
@@ -431,10 +449,12 @@ nomem:
     /* As long as there are unprocessed fragments in the chain... */
     while ((fp = &frags, f = *fp)) {
 
+#if DEBUG
 	dprintf("Current free list:\n");
-	syslinux_dump_memmap(mmap);
+	syslinux_dump_memmap(stdout, mmap);
 	dprintf("Current frag list:\n");
-	syslinux_dump_movelist(frags);
+	syslinux_dump_movelist(stdout, frags);
+#endif
 
 	/* Scan for fragments which can be discarded without action. */
 	if (f->src == f->dst) {
@@ -672,16 +692,16 @@ int main(int argc, char *argv[])
 
     *fep = NULL;
 
-    dprintf("Input move list:\n");
-    syslinux_dump_movelist(frags);
-    dprintf("Input free list:\n");
-    syslinux_dump_memmap(memmap);
+    printf("Input move list:\n");
+    syslinux_dump_movelist(stdout, frags);
+    printf("Input free list:\n");
+    syslinux_dump_memmap(stdout, memmap);
 
     if (syslinux_compute_movelist(&moves, frags, memmap)) {
 	printf("Failed to compute a move sequence\n");
 	return 1;
     } else {
-	dprintf("Final move list:\n");
+	printf("Final move list:\n");
 	syslinux_dump_movelist(stdout, moves);
 	return 0;
     }

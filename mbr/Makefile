@@ -16,8 +16,7 @@
 #
 
 topdir = ..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/embedded.mk
+include $(topdir)/MCONFIG.embedded
 
 all:	mbr.bin   altmbr.bin   gptmbr.bin   isohdpfx.bin   isohdppx.bin \
 	mbr_c.bin altmbr_c.bin gptmbr_c.bin isohdpfx_c.bin isohdppx_c.bin \

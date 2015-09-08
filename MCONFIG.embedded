@@ -14,7 +14,7 @@
 ## Make configuration for embedded directories
 ##
 
-include $(MAKEDIR)/syslinux.mk
+include $(topdir)/MCONFIG
 
 GCCOPT    := $(call gcc_ok,-m32,)
 GCCOPT    += $(call gcc_ok,-ffreestanding,)

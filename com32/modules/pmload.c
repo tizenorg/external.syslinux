@@ -81,8 +81,10 @@ int boot_raw(void *ptr, size_t len, addr_t where, char **argv)
     if (!mmap || !amap)
 	goto bail;
 
+#if DEBUG
     dprintf("Initial memory map:\n");
-    syslinux_dump_memmap(mmap);
+    syslinux_dump_memmap(stdout, mmap);
+#endif
 
     dprintf("Segment at 0x%08x len 0x%08x\n", where, len);
 
@@ -117,8 +119,10 @@ int boot_raw(void *ptr, size_t len, addr_t where, char **argv)
     if (!stack_frame)
 	goto bail;
 
+#if DEBUG
     dprintf("Right before syslinux_memmap_largest()...\n");
-    syslinux_dump_memmap(amap);
+    syslinux_dump_memmap(stdout, amap);
+#endif
 
     if (syslinux_memmap_largest(amap, SMT_FREE, &lstart, &llen))
 	goto bail;		/* NO free memory?! */
@@ -169,14 +173,16 @@ int boot_raw(void *ptr, size_t len, addr_t where, char **argv)
     regs.eip = where;
     regs.esp = stack_pointer;
 
+#if DEBUG
     dprintf("Final memory map:\n");
-    syslinux_dump_memmap(mmap);
+    syslinux_dump_memmap(stdout, mmap);
 
     dprintf("Final available map:\n");
-    syslinux_dump_memmap(amap);
+    syslinux_dump_memmap(stdout, amap);
 
     dprintf("Movelist:\n");
-    syslinux_dump_movelist(ml);
+    syslinux_dump_movelist(stdout, ml);
+#endif
 
     /* This should not return... */
     fputs("Booting...\n", stdout);

@@ -15,8 +15,7 @@
 ##
 
 topdir = ..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/embedded.mk
+include $(topdir)/MCONFIG.embedded
 
 CFLAGS	+= -D__MSDOS__
 # CFLAGS  += -DDEBUG

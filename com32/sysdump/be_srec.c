@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <minmax.h>
-#include "upload_backend.h"
+#include "backend.h"
 
 /* Write a single S-record */
 static int write_srecord(unsigned int len,  unsigned int alen,
@@ -43,7 +43,7 @@ static int write_srecord(unsigned int len,  unsigned int alen,
     return 0;
 }
 
-static int upload_srec_write(struct upload_backend *be)
+static int be_srec_write(struct backend *be)
 {
     char name[33];
     const char *buf;
@@ -77,9 +77,9 @@ static int upload_srec_write(struct upload_backend *be)
     return 0;
 }
 
-struct upload_backend upload_srec = {
+struct backend be_srec = {
     .name       = "srec",
     .helpmsg    = "[filename]",
     .minargs    = 0,
-    .write      = upload_srec_write,
+    .write      = be_srec_write,
 };

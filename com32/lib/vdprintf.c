@@ -14,8 +14,6 @@
 #define DEBUG 1
 #include <dprintf.h>
 
-#ifndef vdprintf
-
 #define BUFFER_SIZE	4096
 
 enum serial_port_regs {
@@ -116,5 +114,3 @@ void vdprintf(const char *format, va_list ap)
     while (rv--)
 	debug_putc(*p++);
 }
-
-#endif /* vdprintf */

@@ -83,12 +83,7 @@ int syslinux_memmap_find(struct syslinux_memmap *list,
 			 addr_t * start, addr_t * len, addr_t align);
 
 /* Debugging functions */
-#ifdef DEBUG
-void syslinux_dump_movelist(struct syslinux_movelist *ml);
-void syslinux_dump_memmap(struct syslinux_memmap *memmap);
-#else
-#define syslinux_dump_movelist(x) ((void)0)
-#define syslinux_dump_memmap(x)	  ((void)0)
-#endif
+void syslinux_dump_movelist(FILE * file, struct syslinux_movelist *ml);
+void syslinux_dump_memmap(FILE * file, struct syslinux_memmap *memmap);
 
 #endif /* _SYSLINUX_MOVEBITS_H */

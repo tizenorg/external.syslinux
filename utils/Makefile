@@ -15,19 +15,15 @@
 #
 
 topdir = ..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/syslinux.mk
+include $(topdir)/MCONFIG
 
 CFLAGS   = $(GCCWARN) -Os -fomit-frame-pointer -D_FILE_OFFSET_BITS=64
-LDFLAGS  = -O2
+LDFLAGS  = -O2 -s
 
-C_TARGETS	 = isohybrid gethostip memdiskfind
-SCRIPT_TARGETS	 = mkdiskimage
-SCRIPT_TARGETS	+= isohybrid.pl  # about to be obsoleted
-ASIS		 = keytab-lilo lss16toppm md5pass ppmtolss16 sha1pass \
-		   syslinux2ansi pxelinux-options
-
-TARGETS = $(C_TARGETS) $(SCRIPT_TARGETS)
+TARGETS	 = mkdiskimage isohybrid gethostip memdiskfind
+TARGETS += isohybrid.pl  # about to be obsoleted
+ASIS     = keytab-lilo lss16toppm md5pass ppmtolss16 sha1pass syslinux2ansi \
+	   pxelinux-options
 
 ISOHDPFX = ../mbr/isohdpfx.bin ../mbr/isohdpfx_f.bin ../mbr/isohdpfx_c.bin \
 	   ../mbr/isohdppx.bin ../mbr/isohdppx_f.bin ../mbr/isohdppx_c.bin
@@ -51,7 +47,7 @@ isohdpfx.c: $(ISOHDPFX) isohdpfxarray.pl
 	$(PERL) isohdpfxarray.pl $(ISOHDPFX) > $@
 
 isohybrid: isohybrid.o isohdpfx.o
-	$(CC) $(LDFLAGS) -luuid -o $@ $^
+	$(CC) $(LDFLAGS) -o $@ $^
 
 gethostip: gethostip.o
 	$(CC) $(LDFLAGS) -o $@ $^
@@ -72,8 +68,5 @@ installer: all
 install: installer
 	mkdir -m 755 -p $(INSTALLROOT)$(BINDIR)
 	install -m 755 $(TARGETS) $(ASIS) $(INSTALLROOT)$(BINDIR)
-
-strip:
-	$(STRIP) $(C_TARGETS)
 
 -include .*.d

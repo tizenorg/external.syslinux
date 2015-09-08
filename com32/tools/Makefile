@@ -10,8 +10,8 @@
 ##
 ## -----------------------------------------------------------------------
 
-MAKEDIR = ../../mk
-include $(MAKEDIR)/build.mk
+topdir = ../..
+include $(topdir)/MCONFIG.build
 
 BINS    = relocs
 

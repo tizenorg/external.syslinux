@@ -91,9 +91,10 @@ int init_map(void)
 	error("Failed to allocate initial memory map!\n");
 	return -1;
     }
-
+#if DEBUG
     dprintf("Initial memory map:\n");
-    syslinux_dump_memmap(mmap);
+    syslinux_dump_memmap(stdout, mmap);
+#endif
 
     return 0;
 }

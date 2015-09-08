@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <com32.h>
 #include "sysdump.h"
+#include "backend.h"
 
 #define E820_CHUNK 128
 struct e820_info {
@@ -15,7 +16,7 @@ struct e820_info {
     uint8_t  data[24];
 };
 
-static void dump_e820(struct upload_backend *be)
+static void dump_e820(struct backend *be)
 {
     com32sys_t ireg, oreg;
     struct e820_info *curr;
@@ -62,7 +63,7 @@ static void dump_e820(struct upload_backend *be)
     lfree(curr);
 }
 
-void dump_memory_map(struct upload_backend *be)
+void dump_memory_map(struct backend *be)
 {
     com32sys_t ireg, oreg;
 

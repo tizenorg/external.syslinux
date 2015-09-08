@@ -4,12 +4,11 @@
 
 # Include configuration rules
 topdir = ../..
-MAKEDIR = $(topdir)/mk
-include $(MAKEDIR)/lib.mk
+include ../lib/MCONFIG
 
-REQFLAGS += -I../gplinclude -I../gplinclude/zzjson
+REQFLAGS += -I../gplinclude
 
-GPLDIRS := . disk dmi vpd acpi zzjson
+GPLDIRS := . disk dmi vpd acpi
 LIBOBJS := $(foreach dir,$(GPLDIRS),$(patsubst %.c,%.o,$(wildcard $(dir)/*.c)))
 
 BINDIR   = /usr/bin

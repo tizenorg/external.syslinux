@@ -23,14 +23,6 @@ Sect1Ptr1_VAL	equ 0xfeedface
 %include "diskboot.inc"
 
 ; ===========================================================================
-;  Padding after the (minimum) 512-byte boot sector so that the rest of
-;  the file has aligned sectors, even if they are larger than 512 bytes.
-; ===========================================================================
-
-		section .init
-align_pad	zb 512
-
-; ===========================================================================
 ;  Start of LDLINUX.SYS
 ; ===========================================================================
 
@@ -118,15 +110,13 @@ ldlinux_ent:
 ; Checksum data thus far
 ;
 		mov si,ldlinux_sys
-		mov cx,[bsBytesPerSec]
-		shr cx,2
+		mov cx,SECTOR_SIZE >> 2
 		mov edx,-LDLINUX_MAGIC
 .checksum:
 		lodsd
 		add edx,eax
 		loop .checksum
 		mov [CheckSum],edx		; Save intermediate result
-		movzx ebx,si			; Start of the next sector
 
 ;
 ; Tell the user if we're using EBIOS or CBIOS
@@ -142,7 +132,6 @@ print_bios:
 		call writestr_early
 
 		section .earlybss
-		alignb 2
 %define	HAVE_BIOSNAME 1
 BIOSName	resw 1
 
@@ -151,9 +140,8 @@ BIOSName	resw 1
 ; Now we read the rest of LDLINUX.SYS.
 ;
 load_rest:
-		push bx				; LSW of load address
-
 		lea esi,[SectorPtrs]
+		mov ebx,TEXT_START+2*SECTOR_SIZE ; Where we start loading
 		mov cx,[DataSectors]
 		dec cx				; Minus this sector
 
@@ -169,7 +157,7 @@ load_rest:
 		xor bx,bx
 		call getlinsec
 		pop ebx
-		imul bp,[bsBytesPerSec]		; Will be < 64K
+		shl ebp,SECTOR_SHIFT
 		add ebx,ebp
 		add si,10
 		jmp .get_chunk
@@ -182,11 +170,9 @@ load_rest:
 ; by the time we get to the end it should all cancel out.
 ;
 verify_checksum:
-		pop si				; LSW of load address
-		movzx eax,word [bsBytesPerSec]
-		shr ax,2
-		mov ecx,[LDLDwords]		; Total dwords
-		sub ecx,eax			; ... minus one sector
+		mov si,ldlinux_sys + SECTOR_SIZE
+		mov ecx,[LDLDwords]
+		sub ecx,SECTOR_SIZE >> 2
 		mov eax,[CheckSum]
 .checksum:
 		add eax,[si]
@@ -274,7 +260,7 @@ getlinsec_ebios:
 		add eax,edi			; Advance sector pointer
 		adc edx,0
 		sub bp,di			; Sectors left
-		imul di,[bsBytesPerSec]
+                shl di,SECTOR_SHIFT		; 512-byte sectors
                 add bx,di			; Advance buffer pointer
                 and bp,bp
                 jnz .loop
@@ -364,7 +350,7 @@ getlinsec_cbios:
 		jc .error
 .resume:
 		movzx ecx,al		; ECX <- sectors transferred
-		imul ax,[bsBytesPerSec]	; Convert sectors in AL to bytes in AX
+		shl ax,SECTOR_SHIFT	; Convert sectors in AL to bytes in AX
 		pop bx
 		add bx,ax
 		pop bp
@@ -432,10 +418,10 @@ safedumpregs:
 
 rl_checkpt	equ $				; Must be <= 8000h
 
-rl_checkpt_off	equ $-ldlinux_sys
+rl_checkpt_off	equ ($-$$)
 %ifndef DEPEND
- %if rl_checkpt_off > 512-10			; Need minimum one extent
-  %assign rl_checkpt_overflow rl_checkpt_off - (512-10)
+ %if rl_checkpt_off > 3F6h			; Need one extent
+  %assign rl_checkpt_overflow rl_checkpt_off - 3F6h
   %error Sector 1 overflow by rl_checkpt_overflow bytes
  %endif
 %endif
@@ -448,8 +434,8 @@ rl_checkpt_off	equ $-ldlinux_sys
 ;
 		alignz 2
 MaxInitDataSize	equ 96 << 10
-MaxLMA		equ LDLINUX_SYS+MaxInitDataSize
-SectorPtrs	zb 10*(MaxInitDataSize >> MIN_SECTOR_SHIFT)
+MaxLMA		equ TEXT_START+SECTOR_SIZE+MaxInitDataSize
+SectorPtrs	zb 10*(MaxInitDataSize >> SECTOR_SHIFT)
 SectorPtrsEnd	equ $
 
 ; ----------------------------------------------------------------------------

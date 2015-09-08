@@ -120,8 +120,10 @@ int boot_elf(void *ptr, size_t len, char **argv)
     if (!mmap || !amap)
 	goto bail;
 
+#if DEBUG
     dprintf("Initial memory map:\n");
-    syslinux_dump_memmap(mmap);
+    syslinux_dump_memmap(stdout, mmap);
+#endif
 
     ph = (Elf32_Phdr *) (cptr + eh->e_phoff);
 
@@ -183,8 +185,10 @@ int boot_elf(void *ptr, size_t len, char **argv)
     if (!stack_frame)
 	goto bail;
 
+#if DEBUG
     dprintf("Right before syslinux_memmap_largest()...\n");
-    syslinux_dump_memmap(amap);
+    syslinux_dump_memmap(stdout, amap);
+#endif
 
     if (syslinux_memmap_largest(amap, SMT_FREE, &lstart, &llen))
 	goto bail;		/* NO free memory?! */
@@ -235,14 +239,16 @@ int boot_elf(void *ptr, size_t len, char **argv)
     regs.eip = eh->e_entry;
     regs.esp = stack_pointer;
 
+#if DEBUG
     dprintf("Final memory map:\n");
-    syslinux_dump_memmap(mmap);
+    syslinux_dump_memmap(stdout, mmap);
 
     dprintf("Final available map:\n");
-    syslinux_dump_memmap(amap);
+    syslinux_dump_memmap(stdout, amap);
 
     dprintf("Movelist:\n");
-    syslinux_dump_movelist(ml);
+    syslinux_dump_movelist(stdout, ml);
+#endif
 
     /* This should not return... */
     fputs("Booting...\n", stdout);
